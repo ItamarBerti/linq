@@ -10,6 +10,7 @@ namespace ConsoleApp1
         List<Caminhao> caminhoes = new List<Caminhao>();    
         public List<Viagem> viagens = new List<Viagem>();
         List<Motorista> motoristas = new List<Motorista>();
+
         public void CadastroCaminhao()
         {
             Caminhao caminhao = new Caminhao();
@@ -80,17 +81,51 @@ namespace ConsoleApp1
                 Console.WriteLine(caminhao.ToString());
             }
         }
-        static List<Motorista> EncontrarMotorista(List<Motorista> motoristas, string nome )
+        public  List<Viagem> EncontrarViagensPorMotorista(string nomeMotorista)
+        {            
+            return viagens.Where(viagem => viagem.Motorista.Nome == nomeMotorista).ToList();
+        }   
+        public List<Viagem> EncontrarViagensPorCaminhao(string modeloCaminhao)
         {
-            var motoristasEncontrado = motoristas.FirstOrDefault(motoristas => motoristas.Nome.Contains("a"));
-            return motoristas.ToList();
+            return viagens.Where(viagem => viagem.Caminhao.Modelo == modeloCaminhao).ToList();
         }
-        static Viagem SelectViagem(List<Viagem> viagens, int id)
+        public List<Caminhao> EncontrarCaminhoesPorMotoristaEmViagem(string nomeMotorista)
         {
-            Viagem retorno = viagens.SingleOrDefault(x => x.Id == id);
-            return retorno;
+            var viagensPorMotorista = viagens.Where(viagem => viagem.Motorista.Nome == nomeMotorista).ToList();
+            var caminhoes = new List<Caminhao>();
+            viagensPorMotorista.ForEach(viagem => caminhoes.Add(viagem.Caminhao));
+            return caminhoes;
         }
-        
+        public List<Viagem> EncontrarViagensPorCaminhaEMotoristaEspecifico(string placa, string nome)
+        {              
+            List<Viagem> viagens1 = new List<Viagem>();
+            viagens1 = viagens.Where(viagem => viagem.Caminhao.Placa == placa).ToList();
+            viagens1 = viagens.Where(viagem => viagem.Motorista.Nome == nome).ToList();
+            return viagens1;
+        }
+        public List<Viagem> ViagensQueMotoristaNaoEstava(string nomeMotorista)
+        {
+            List<Viagem>viagemQueMotoristaNaoEstava = new List<Viagem>();
+            viagemQueMotoristaNaoEstava = viagens.Where(viagem => viagem.Motorista.Nome == nomeMotorista).ToList();
+            if(viagemQueMotoristaNaoEstava.Count == 0)
+            {
+                return viagemQueMotoristaNaoEstava;
+            }
+            return null;      
+        }
+        public List<Viagem> ViagensQueMotoristaECaminhaoNaoEstavam(string nomeMotorista, string placa)
+        {
+            List<Viagem> viagemQueNaoEstavam = new List<Viagem>();
+            viagemQueNaoEstavam = viagens.Where(viagem => viagem.Motorista.Nome == nomeMotorista).ToList();
+            viagemQueNaoEstavam = viagens.Where(Viagem => Viagem.Caminhao.Placa == placa).ToList();
+            if(viagemQueNaoEstavam.Count == 0)
+            {
+                return viagemQueNaoEstavam;
+            }
+            return null;
+        }
+
+
         private Caminhao SelectCaminhao()
         {
             int id = 0;
@@ -114,6 +149,7 @@ namespace ConsoleApp1
       
         private void MostrarMotoristasDisponiveis()
         {
+
             foreach(Motorista motorista in this.motoristas)
             {
                 Console.WriteLine(motorista.ToString());
